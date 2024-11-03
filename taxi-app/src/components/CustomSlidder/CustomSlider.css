@@ -1,0 +1,70 @@
+/* src/components/CustomSlider.css */
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-40%);
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.slider-title {
+  position: absolute;
+  bottom: 8%;
+  color: white;
+  text-shadow: 2px 2px #0c0c0c;
+}
+
+.slidder-sub {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  width: 100%;
+  bottom: 7%;
+}
+
+.slidder-button {
+  padding-left: 15px;
+  padding-right: 15px;
+  color: black;
+  background-color: rgba(255, 255, 255, 0.699);
+  border-radius: 7px;
+  font-size: smaller;
+  font-weight: 600;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.slider-button:focus {
+  outline: none;
+}
+
+.slider-button.prev {
+  left: 10px;
+}
+
+.slider-button.next {
+  right: 10px;
+}

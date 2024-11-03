@@ -1,0 +1,54 @@
+/* src/components/BottomNavBar.css */
+.header-top {
+  position: fixed;
+  top: 10px;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  display: flex;
+  justify-content: space-between;
+  width: 95%;
+  height: 60px;
+  z-index: 10;
+  border-radius: 20px;
+  background-color: rgba(58, 53, 133, 0.849);
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.header-item {
+  color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  font-weight: 900;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 0.5rem;
+  margin: 5px;
+}
+
+.header-item {
+  gap: 10px;
+}
+
+.search {
+  color: black;
+  font-weight: 100;
+  border-radius: 20px;
+  background-color: white;
+  gap: 10px;
+  width: 30%;
+  padding-left: 20px;
+  margin-right: 20px;
+}
+
+.search span {
+  color: gray;
+  font-weight: 100;
+  font-family: "Courier New", Courier, monospace;
+  display: flex;
+  align-items: center;
+  font-size: smaller;
+}

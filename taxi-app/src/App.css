@@ -1,0 +1,16 @@
+/* src/styles/App.css */
+.app-container {
+  margin: 0 auto;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f7f9fc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  position: absolute;
+  top: 80px;
+  right: 2.5%;
+  left: 2.5%;
+  width: 95%;
+}

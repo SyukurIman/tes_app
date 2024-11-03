@@ -1,0 +1,44 @@
+/* src/components/BottomNavBar.css */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  padding-top: 0.3rem;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+  font-size: 14px;
+  text-decoration: none;
+  width: 100%;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.nav-item p {
+  margin-block-start: 0%;
+}
+
+.nav-item.active {
+  border-radius: 10px 10px 0px 0px;
+  color: rgb(3, 3, 3);
+  font-weight: bold;
+  font-weight: 900;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.nav-item span {
+  font-size: 20px;
+}
