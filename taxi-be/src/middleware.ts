@@ -11,7 +11,9 @@ export async function middleware(request: NextRequest) {
   }
 
   request.headers.set('userId', String(result.userId));
-  return NextResponse.next({request: request});
+  const res = NextResponse.next({request: request});
+
+  return res
 }
 
 // Define which paths require protection

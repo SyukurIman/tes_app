@@ -1,0 +1,22 @@
+.listContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.listHeader{
+    display: flex;
+    justify-content: space-between;
+    padding-left: 2%;
+    padding-right: 2%;
+    margin-block-end: 0%;
+    margin-top: 0.5rem;
+    font-size: small;
+    align-items: center;
+}
+
+.listHeader button {
+    padding: 0.5rem;
+    border: 0;
+    font-size: medium;
+    height: fit-content;
+}

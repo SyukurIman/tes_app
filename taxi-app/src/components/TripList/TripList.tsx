@@ -5,6 +5,7 @@ import TripCard from "../TripCard/TripCard";
 import { DataTrip } from "../../type/trip";
 
 import Maps from "../map/Maps";
+import "./TripList.css"
 
 const TripList = () => {
   let [trips, setTrips] = useState<DataTrip[]>([]);
@@ -35,8 +36,13 @@ const TripList = () => {
 
   return (
     <div
-      style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+      className="listContainer"
     >
+      <div className="listHeader">
+        <h2>Best Trip</h2>
+        <button><i className="fa-solid fa-circle-chevron-right"></i></button>  
+      </div>
+      
       {trips.map((trip, index) => (
         <TripCard
           key={index}
