@@ -13,7 +13,7 @@ const useUserProfile = () => {
 
         if (token) {
           const response = await fetch(url + "/api/user/profile", {
-            method: "POST",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,

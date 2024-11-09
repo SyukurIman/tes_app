@@ -6,6 +6,7 @@ import useUserProfile from "../hooks/useUserProfile";
 import { DataTrip, MapTrip } from "../type/trip";
 import { UserInfo } from "../type/in";
 import { useOutletContext } from "react-router-dom";
+import WelcomeCard from "../components/WelcomeCard/WelcomeCard";
 
 interface ContextData {
   trips: DataTrip[];
@@ -14,36 +15,32 @@ interface ContextData {
 }
 
 const Trip: React.FC = () => {
+  const dataUser = useUserProfile()
   const [images, setImages] = useState<string[]>([]);
-  // const { user } = useUserProfile();
-
   const dataGlobal = useOutletContext<ContextData>();
-  const [loading, setLoading] = useState(true);
-
+  const [user, setUser] = useState<UserInfo | null>()
+  
   useEffect(() => {
-    // Fetch images from API
     const fetchImages = async () => {
       try {
         const response = await fetch(
           "https://random-image-pepebigotes.vercel.app/lists/example-images-list.json"
-        ); // Replace with your API endpoint
+        ); 
         const data = await response.json();
-        setImages(data.images); // Assuming API response format is { images: ["url1", "url2", ...] }
+        setImages(data.images); 
       } catch (error) {
         console.error("Error fetching images:", error);
       }
     };
-
-    if (images && dataGlobal.user) {
-      console.log(dataGlobal.user);
-      setLoading(false);
-    }
-
-    if (!dataGlobal.user) {
-    }
-
     fetchImages();
   }, []);
+
+  useEffect(() => {
+    if (dataGlobal?.mapData?.length > 0) {
+      setUser(dataGlobal.user ?? dataUser.user);
+    }
+  }, [dataGlobal, dataUser]);
+  
 
   return (
     <div className="content mt-3">
@@ -53,6 +50,12 @@ const Trip: React.FC = () => {
         <p>Loading images...</p>
       )}
 
+      {
+        dataGlobal.mapData.length > 0 && (
+          <WelcomeCard token={""} name={user?.name} email={""} photoUrl={""}>
+          </WelcomeCard>      
+        )
+      }
       <TripList />
     </div>
   );

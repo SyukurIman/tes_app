@@ -1,9 +1,6 @@
-// src/components/TripList.tsx
 import { useEffect, useRef, useState } from "react";
-
 import TripCard from "../TripCard/TripCard";
 import { DataTrip, MapTrip } from "../../type/trip";
-
 import "./TripList.css";
 import { useOutletContext } from "react-router-dom";
 
@@ -16,63 +13,106 @@ const TripList: React.FC = () => {
   const { trips, mapData } = useOutletContext<ContextData>();
 
   const sliderRef = useRef<HTMLDivElement>(null);
-  const [scrollDirection, setScrollDirection] = useState<"left" | "right">(
-    "right"
-  );
+  const [scrollDirection, setScrollDirection] = useState<"left" | "right">("right");
+  const [WidthNow, setWidthNow] = useState(0);
+  const [lenWidth, setLenWidth] = useState(0);
 
-  const [WidthNow, setWidthNow] = useState<number>(
-    sliderRef.current?.offsetWidth || 0
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredTrips, setFilteredTrips] = useState<DataTrip[]>(trips);
+  const [filteredMapData, setFilteredMapData] = useState<MapTrip[]>(mapData);
 
-  const [lenWidth, setLenWidth] = useState<number>(0);
+  const [autoScroll, setAutoScroll] = useState<number | null>(null);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0); // Track active slide index
+
+  // Filter trips based on query
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (sliderRef.current) {
-        setWidthNow(sliderRef.current?.offsetWidth);
-        if (scrollDirection === "right") {
-          sliderRef.current.scrollBy({
-            left: WidthNow,
-            behavior: "smooth",
-          });
+    const filteredIndices = trips
+      .map((trip, index) => {
+        if (
+          String(trip.vendor_id).toLowerCase().includes(searchQuery.toLowerCase()) ||
+          String(trip.trip_distance).includes(searchQuery) ||
+          String(trip.total_amount).includes(searchQuery)
+        ) {
+          return index;
+        }
+        return -1;
+      })
+      .filter((index) => index !== -1);
 
-          setLenWidth(WidthNow + lenWidth);
-          if (lenWidth >= WidthNow * 5) {
+    setFilteredTrips(filteredIndices.map((index) => trips[index]));
+    setFilteredMapData(filteredIndices.map((index) => mapData[index]));
+  }, [searchQuery, trips, mapData]);
+
+  // Automatic scroll logic
+  const startAutoScroll = () => {
+    if (autoScroll) clearInterval(autoScroll);
+
+    const intervalId = window.setInterval(() => {
+      if (sliderRef.current) {
+        setWidthNow(sliderRef.current.offsetWidth);
+        if (scrollDirection === "right") {
+          sliderRef.current.scrollBy({ left: WidthNow, behavior: "smooth" });
+          setLenWidth((prev) => prev + WidthNow);
+          setActiveSlideIndex((prev) => Math.min(prev + 1, filteredTrips.length - 1)); // Update active slide index
+
+          if (lenWidth >= WidthNow * (filteredTrips.length - 1)) {
             setScrollDirection("left");
           }
         } else {
-          sliderRef.current.scrollBy({
-            left: -WidthNow,
-            behavior: "smooth",
-          });
+          sliderRef.current.scrollBy({ left: -WidthNow, behavior: "smooth" });
+          setLenWidth((prev) => prev - WidthNow);
+          setActiveSlideIndex((prev) => Math.max(prev - 1, 0)); // Update active slide index
 
-          setLenWidth(WidthNow - lenWidth);
           if (lenWidth <= 0) {
             setScrollDirection("right");
           }
         }
       }
-    }, 10000); // Change image every 3 seconds
-    return () => clearInterval(interval);
-  }, [scrollDirection, WidthNow, lenWidth]);
+    }, 10000); // Change slide every 10 seconds
+
+    setAutoScroll(intervalId);
+  };
+
+  useEffect(() => {
+    startAutoScroll();
+    return () => {
+      if (autoScroll) clearInterval(autoScroll);
+    };
+  }, [scrollDirection, WidthNow, lenWidth, filteredTrips]);
+
+  // Manual scrolling
+  const handleManualScroll = () => {
+    if (autoScroll) clearInterval(autoScroll);
+    startAutoScroll();
+  };
 
   const scrollLeft = () => {
+    handleManualScroll();
     if (sliderRef.current) {
-      setWidthNow(sliderRef.current?.offsetWidth);
-      if (lenWidth > 0 && lenWidth >= WidthNow) {
-        setLenWidth(lenWidth - WidthNow);
+      setWidthNow(sliderRef.current.offsetWidth);
+      if (lenWidth > 0) {
+        setLenWidth((prev) => prev - WidthNow);
+        setActiveSlideIndex((prev) => Math.max(prev - 1, 0)); // Update active slide index
       }
       sliderRef.current.scrollBy({ left: -WidthNow, behavior: "smooth" });
+      if (lenWidth <= 0) {
+        setScrollDirection("right");
+      }
     }
   };
 
-  // Fungsi untuk menggulir slider ke kanan
   const scrollRight = () => {
+    handleManualScroll();
     if (sliderRef.current) {
-      setWidthNow(sliderRef.current?.offsetWidth);
-      if (lenWidth >= 0 && lenWidth <= WidthNow * 5) {
-        setLenWidth(lenWidth + WidthNow);
+      setWidthNow(sliderRef.current.offsetWidth);
+      if (lenWidth < WidthNow * (filteredTrips.length - 1)) {
+        setLenWidth((prev) => prev + WidthNow);
+        setActiveSlideIndex((prev) => Math.min(prev + 1, filteredTrips.length - 1)); // Update active slide index
       }
       sliderRef.current.scrollBy({ left: WidthNow, behavior: "smooth" });
+      if (lenWidth >= WidthNow * (filteredTrips.length - 1)) {
+        setScrollDirection("left");
+      }
     }
   };
 
@@ -80,19 +120,23 @@ const TripList: React.FC = () => {
     <div className="listContainer">
       <div className="listHeader">
         <h2>Best Trip</h2>
-        <button>
-          <i className="fa-solid fa-circle-chevron-right"></i>
-        </button>
+        <input
+          type="text"
+          placeholder="Search by vendor, distance, or amount"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
       </div>
       <hr className="mb-3" />
-      {trips.length > 0 && mapData.length > 0 ? (
+
+      {filteredTrips.length > 0 && filteredMapData.length > 0 ? (
         <>
           <div className="slider" ref={sliderRef}>
             <div className="slider-inner">
-              {trips.map((trip, index) => (
+              {filteredTrips.map((trip, index) => (
                 <div className="slide" key={index}>
                   <TripCard
-                    key={index}
                     vendor_id={String(trip.vendor_id)}
                     trip_distance={Number(trip.trip_distance)}
                     total_amount={Number(trip.total_amount)}
@@ -100,38 +144,39 @@ const TripList: React.FC = () => {
                     pickup_latitude={Number(trip.pickup_latitude)}
                     dropoff_longitude={Number(trip.dropoff_longitude)}
                     dropoff_latitude={Number(trip.dropoff_latitude)}
-                    distance={mapData[index].distance}
-                    duration={mapData[index].duration}
-                    coordinates={mapData[index].coordinates}
+                    distance={filteredMapData[index]?.distance}
+                    duration={filteredMapData[index]?.duration}
+                    coordinates={filteredMapData[index]?.coordinates}
                     steps={[]}
+                    pickup_datetime={trip.pickup_datetime}
+                    dropoff_datetime={trip.dropoff_datetime}
+                    rate_code={trip.rate_code}
+                    passenger_count={Number(trip.passenger_count)}
+                    isActive={index === activeSlideIndex} // Pass active status to TripCard
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          <hr className="my-2 mx-0" />
-          <div className="listHeader button_map">
+          <div className="listHeader button_map mt-2">
             {lenWidth > 0 && (
-              <div className="left-btn">
-                <button className="navigation-buttons " onClick={scrollLeft}>
-                  <i className="fa-solid fa-caret-left"></i>
-                  <span>Previus</span>
-                </button>
-              </div>
+              <button className="navigation-buttons left-btn" onClick={scrollLeft}>
+                <i className="fa-solid fa-caret-left"></i>
+                Previous
+              </button>
             )}
-            {lenWidth <= WidthNow * 5 && (
-              <div className="right-btn">
-                <button className="navigation-buttons" onClick={scrollRight}>
-                  <span>Next</span>
-                  <i className="fa-solid fa-caret-right"></i>
-                </button>
-              </div>
+
+            {lenWidth < WidthNow * (filteredTrips.length - 1) && (
+              <button className="navigation-buttons right-btn" onClick={scrollRight}>
+                Next
+                <i className="fa-solid fa-caret-right"></i>
+              </button>
             )}
           </div>
         </>
       ) : (
-        <></>
+        <p>No trips found</p>
       )}
     </div>
   );

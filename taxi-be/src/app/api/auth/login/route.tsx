@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, version: user.tokenVersion }, JWT_SECRET, {
       expiresIn: "1h",
       subject: "app",
       algorithm: "HS256",

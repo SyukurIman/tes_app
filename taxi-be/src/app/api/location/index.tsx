@@ -31,7 +31,7 @@ export async function pathLocation(req: NextRequest) {
     const routeData = await response.json();
     if (!routeData.features || routeData.features.length === 0) {
       return NextResponse.json(
-        { error: "Failed to retrieve route" },
+        { message: routeData },
         { status: 500 }
       );
     }

@@ -1,25 +1,40 @@
-import { NextRequest } from "next/server";
-import { isAuthenticated } from "./lib/jwtTokenControl";
-import { header_set } from "./lib/header";
+import { NextRequest, NextResponse } from "next/server";
+import { isAuthenticated } from "./app/lib/jwtTokenControl";
+import { headerSet } from "./app/lib/header";
+import { PrismaClient } from "@prisma/client";
+import { checkStatus } from "./app/api/user/logout";
+
+const prisma = new PrismaClient();
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/api/user")) {
-    const result = await isAuthenticated(request);
+  let response = NextResponse.next();
 
-    if (!result.userId) {
-      return Response.json(
-        { success: false, message: "Invalid token" },
-        { status: 401 }
-      );
+  response = headerSet(request, response);
+
+  // Proteksi rute /api/user
+  try {
+    if (pathname.startsWith("/api/user")) {
+      const result = await isAuthenticated(request);
+  
+      if (!result.payload) {
+        return NextResponse.json(
+          { success: false, message: result },
+          { status: 401 }
+        );
+      }
+      response.headers.set("userId", String(result.payload.id));
+      response.headers.set("version", String(result.payload.version));
     }
-    request.headers.set("userId", String(result.userId));
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 401 }
+    );
   }
-
-  return await header_set(request);
+  return response;
 }
 
-// Define which paths require protection
 export const config = {
-  matcher: ["/api/user/:path*", "/api/:path*"], // Protect all routes under /api/user/
+  matcher: ["/api/user/:path*", "/api/:path*"],
 };

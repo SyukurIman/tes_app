@@ -6,8 +6,7 @@ const jwtConfig = {
 };
 
 export const isAuthenticated = async (req: NextRequest) => {
-  let token =
-    req.headers.get("authorization") || req.headers.get("Authorization");
+  let token = req.headers.get("authorization") || req.headers.get("Authorization");
 
   if (token) {
     try {
@@ -17,17 +16,23 @@ export const isAuthenticated = async (req: NextRequest) => {
 
       const { payload } = await jose.jwtVerify(token, jwtConfig.secret);
       if (payload?.id) {
-        // req.nextUrl.searchParams.set('userId', payload.id);
-        return { userId: payload.id };
-      } else {
-        return { userId: null };
-      }
+        const id = String(payload.id)
+
+        // const user = await prisma.user.findFirst({
+        //   where: { id },
+        // });
+        
+        if (payload.version) {
+          return { payload: payload };
+        }
+      } 
+      return { payload: null };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      return { userId: null };
+      return { payload: err.message };
     }
   } else {
-    return { userId: null };
+    return { payload: "null" };
   }
 };

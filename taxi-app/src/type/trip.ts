@@ -6,6 +6,10 @@ export type DetailTrip = {
   pickup_latitude: number;
   dropoff_longitude: number;
   dropoff_latitude: number;
+  pickup_datetime: any;
+  dropoff_datetime: any;
+  rate_code: any;
+  passenger_count: number;
 };
 
 export type DataTrip = {
