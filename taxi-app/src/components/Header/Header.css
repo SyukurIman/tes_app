@@ -10,7 +10,7 @@
   height: 60px;
   z-index: 10;
   border-radius: 20px;
-  background-color: rgba(58, 53, 133, 0.849);
+  background-color: rgb(68, 61, 155);
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }

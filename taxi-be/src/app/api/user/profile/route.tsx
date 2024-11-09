@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import {  getProfile } from "./index";
+import { NextRequest } from "next/server";
+import { getProfile } from "./index";
 
 export async function POST(req: NextRequest) {
-  return getProfile(req)
+  return getProfile(req);
 }

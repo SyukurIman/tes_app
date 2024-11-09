@@ -1,14 +1,9 @@
 /* src/components/TripCard.css */
 .trip-card {
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: 0px;
+  width: 100%;
 }
 
 .card-field {
@@ -18,4 +13,8 @@
 
 .card-field strong {
   color: #555;
+}
+.leaflet-container {
+  border-radius: 10px;
+  margin-bottom: 10px;
 }

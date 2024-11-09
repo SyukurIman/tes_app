@@ -13,4 +13,6 @@
   right: 2.5%;
   left: 2.5%;
   width: 95%;
+  padding-bottom: 100px;
+  z-index: 0;
 }

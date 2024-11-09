@@ -1,22 +1,88 @@
 .listContainer {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
-.listHeader{
-    display: flex;
-    justify-content: space-between;
-    padding-left: 2%;
-    padding-right: 2%;
-    margin-block-end: 0%;
-    margin-top: 0.5rem;
-    font-size: small;
-    align-items: center;
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-block-end: 0%;
+  font-size: small;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.listHeader h2 {
+  font-size: large;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  font-weight: 600;
 }
 
 .listHeader button {
-    padding: 0.5rem;
-    border: 0;
-    font-size: medium;
-    height: fit-content;
+  border: 0;
+  font-size: medium;
+  height: fit-content;
+}
+
+.slider {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.listContainer {
+  padding: 10px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.slider-inner {
+  display: flex;
+}
+
+.slide {
+  display: inline-flex;
+  white-space: normal;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.navigation-buttons {
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: medium;
+  background-color: rgb(68, 61, 155);
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  border-radius: 10px;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.left-btn,
+.right-btn {
+  position: absolute;
+}
+
+.left-btn {
+  left: 20px;
+}
+
+.right-btn {
+  right: 20px;
+}
+
+.button_map {
+  width: 100%;
+  height: 32px;
+  margin-bottom: 0.5rem;
 }

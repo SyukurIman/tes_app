@@ -32,10 +32,10 @@
 
 .nav-item.active {
   border-radius: 10px 10px 0px 0px;
-  color: rgb(3, 3, 3);
+  color: rgb(255, 255, 255);
   font-weight: bold;
   font-weight: 900;
-  background-color: white;
+  background-color: rgb(68, 61, 155);
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 

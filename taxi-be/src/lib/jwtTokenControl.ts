@@ -1,16 +1,17 @@
-import * as jose from 'jose';
-import { NextRequest, NextResponse } from 'next/server';
+import * as jose from "jose";
+import { NextRequest } from "next/server";
 
 const jwtConfig = {
   secret: new TextEncoder().encode(process.env.JWT_SECRET),
 };
 
 export const isAuthenticated = async (req: NextRequest) => {
-  let token = req.headers.get('authorization') || req.headers.get('Authorization');
+  let token =
+    req.headers.get("authorization") || req.headers.get("Authorization");
 
   if (token) {
     try {
-      if (token.startsWith('Bearer ')) {
+      if (token.startsWith("Bearer ")) {
         token = token.slice(7);
       }
 
@@ -21,7 +22,9 @@ export const isAuthenticated = async (req: NextRequest) => {
       } else {
         return { userId: null };
       }
-    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error(err);
       return { userId: null };
     }
   } else {

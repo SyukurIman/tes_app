@@ -1,7 +1,4 @@
-// import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
-// import { useEffect } from "react";
-// import requestIp from "request-ip";
 
 export async function pathLocation(req: NextRequest) {
   const { userLat, userLng, destLat, destLng, type } = await req.json();
@@ -10,6 +7,7 @@ export async function pathLocation(req: NextRequest) {
   }
 
   try {
+    // const response = await fetch(apiUrl);
     const response = await fetch(
       `https://api.openrouteservice.org/v2/directions/${type}/geojson`,
       {
@@ -39,14 +37,13 @@ export async function pathLocation(req: NextRequest) {
     }
 
     const feature = routeData.features[0];
-    const { distance, duration, steps } = feature.properties.segments[0];
+    const { distance, duration } = feature.properties.segments[0];
     const coordinates = feature.geometry.coordinates;
 
     const result = {
       distance,
       duration,
       coordinates,
-      steps,
     };
 
     return NextResponse.json({ route: result });

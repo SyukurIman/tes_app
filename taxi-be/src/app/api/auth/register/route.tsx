@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -9,18 +9,23 @@ export async function POST(req: NextRequest) {
     const { name, email, password } = await req.json(); // Parse JSON body
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
-        name,
-        email,
+        name: name,
+        email: email,
         password: hashedPassword,
       },
     });
 
-    return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
+    return NextResponse.json(
+      { message: "User registered successfully" },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: 'User registration failed' }, { status: 500 });
+    console.error("Error fetching route:", error);
+    return NextResponse.json(
+      { error: "User registration failed" },
+      { status: 500 }
+    );
   }
 }
-
-

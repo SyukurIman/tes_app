@@ -2,9 +2,23 @@
 import React, { useEffect, useState } from "react";
 import CustomSlider from "../components/CustomSlidder/CustomSlider";
 import TripList from "../components/TripList/TripList";
+import useUserProfile from "../hooks/useUserProfile";
+import { DataTrip, MapTrip } from "../type/trip";
+import { UserInfo } from "../type/in";
+import { useOutletContext } from "react-router-dom";
+
+interface ContextData {
+  trips: DataTrip[];
+  mapData: MapTrip[];
+  user: UserInfo | null;
+}
 
 const Trip: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
+  // const { user } = useUserProfile();
+
+  const dataGlobal = useOutletContext<ContextData>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch images from API
@@ -20,11 +34,19 @@ const Trip: React.FC = () => {
       }
     };
 
+    if (images && dataGlobal.user) {
+      console.log(dataGlobal.user);
+      setLoading(false);
+    }
+
+    if (!dataGlobal.user) {
+    }
+
     fetchImages();
   }, []);
 
   return (
-    <div className="content">
+    <div className="content mt-3">
       {images.length > 0 ? (
         <CustomSlider images={images} />
       ) : (

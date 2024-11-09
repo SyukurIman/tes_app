@@ -1,27 +1,26 @@
 // src/App.tsx
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Trip from "./pages/Trip";
-import History from "./pages/History";
-import Account from "./pages/Account";
+import { Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Header from "./components/Header/Header";
 import BottomNavBar from "./components/BottomNavbar/BottomNavBar";
 import "./App.css";
 
+import useUserProfile from "./hooks/useUserProfile";
+import useTrips from "./hooks/useTrips";
+
 const App: React.FC = () => {
+  const { user } = useUserProfile();
+  const { trips, mapData } = useTrips();
+  const contextData = { user, trips, mapData };
+
   return (
-    <Router>
-      <div className="app-container">
-        <Routes>
-          <Route path="/trip" element={<Trip />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="*" element={<Trip />} /> {/* Default to Trip */}
-        </Routes>
-        <Header />
-        <BottomNavBar />
-      </div>
-    </Router>
+    <div className="app-container">
+      <Outlet context={contextData} />
+      <Header />
+      <Toaster />
+      <BottomNavBar />
+    </div>
   );
 };
 

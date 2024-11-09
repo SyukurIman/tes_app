@@ -1,58 +1,138 @@
 // src/components/TripList.tsx
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+
 import TripCard from "../TripCard/TripCard";
-import { DataTrip } from "../../type/trip";
+import { DataTrip, MapTrip } from "../../type/trip";
 
-import Maps from "../map/Maps";
-import "./TripList.css"
+import "./TripList.css";
+import { useOutletContext } from "react-router-dom";
 
-const TripList = () => {
-  let [trips, setTrips] = useState<DataTrip[]>([]);
+interface ContextData {
+  trips: DataTrip[];
+  mapData: MapTrip[];
+}
 
+const TripList: React.FC = () => {
+  const { trips, mapData } = useOutletContext<ContextData>();
+
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [scrollDirection, setScrollDirection] = useState<"left" | "right">(
+    "right"
+  );
+
+  const [WidthNow, setWidthNow] = useState<number>(
+    sliderRef.current?.offsetWidth || 0
+  );
+
+  const [lenWidth, setLenWidth] = useState<number>(0);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://data.cityofnewyork.us/resource/gkne-dk5s.json",
-          {
-            headers: {
-              Accept: "application/json",
-              "X-App-Token": "KOVzLN9F73NQyzeS3ofY7h7ZA",
-            },
-            params: {
-              $limit: 5,
-            },
-          }
-        );
-        setTrips(response.data);
-      } catch (error) {
-        console.error("Error fetching trip data:", error);
-      }
-    };
+    const interval = setInterval(() => {
+      if (sliderRef.current) {
+        setWidthNow(sliderRef.current?.offsetWidth);
+        if (scrollDirection === "right") {
+          sliderRef.current.scrollBy({
+            left: WidthNow,
+            behavior: "smooth",
+          });
 
-    fetchData();
-  }, []);
+          setLenWidth(WidthNow + lenWidth);
+          if (lenWidth >= WidthNow * 5) {
+            setScrollDirection("left");
+          }
+        } else {
+          sliderRef.current.scrollBy({
+            left: -WidthNow,
+            behavior: "smooth",
+          });
+
+          setLenWidth(WidthNow - lenWidth);
+          if (lenWidth <= 0) {
+            setScrollDirection("right");
+          }
+        }
+      }
+    }, 10000); // Change image every 3 seconds
+    return () => clearInterval(interval);
+  }, [scrollDirection, WidthNow, lenWidth]);
+
+  const scrollLeft = () => {
+    if (sliderRef.current) {
+      setWidthNow(sliderRef.current?.offsetWidth);
+      if (lenWidth > 0 && lenWidth >= WidthNow) {
+        setLenWidth(lenWidth - WidthNow);
+      }
+      sliderRef.current.scrollBy({ left: -WidthNow, behavior: "smooth" });
+    }
+  };
+
+  // Fungsi untuk menggulir slider ke kanan
+  const scrollRight = () => {
+    if (sliderRef.current) {
+      setWidthNow(sliderRef.current?.offsetWidth);
+      if (lenWidth >= 0 && lenWidth <= WidthNow * 5) {
+        setLenWidth(lenWidth + WidthNow);
+      }
+      sliderRef.current.scrollBy({ left: WidthNow, behavior: "smooth" });
+    }
+  };
 
   return (
-    <div
-      className="listContainer"
-    >
+    <div className="listContainer">
       <div className="listHeader">
         <h2>Best Trip</h2>
-        <button><i className="fa-solid fa-circle-chevron-right"></i></button>  
+        <button>
+          <i className="fa-solid fa-circle-chevron-right"></i>
+        </button>
       </div>
-      
-      {trips.map((trip, index) => (
-        <TripCard
-          key={index}
-          vendor_id={String(trip.vendor_id)} // Map vendor_id to vendorId
-          trip_distance={Number(trip.trip_distance)} // Map trip_distance to tripDistance
-          total_amount={Number(trip.total_amount)} // Map total_amount to totalAmount
-        />
-      ))}
+      <hr className="mb-3" />
+      {trips.length > 0 && mapData.length > 0 ? (
+        <>
+          <div className="slider" ref={sliderRef}>
+            <div className="slider-inner">
+              {trips.map((trip, index) => (
+                <div className="slide" key={index}>
+                  <TripCard
+                    key={index}
+                    vendor_id={String(trip.vendor_id)}
+                    trip_distance={Number(trip.trip_distance)}
+                    total_amount={Number(trip.total_amount)}
+                    pickup_longitude={Number(trip.pickup_longitude)}
+                    pickup_latitude={Number(trip.pickup_latitude)}
+                    dropoff_longitude={Number(trip.dropoff_longitude)}
+                    dropoff_latitude={Number(trip.dropoff_latitude)}
+                    distance={mapData[index].distance}
+                    duration={mapData[index].duration}
+                    coordinates={mapData[index].coordinates}
+                    steps={[]}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <Maps></Maps>
+          <hr className="my-2 mx-0" />
+          <div className="listHeader button_map">
+            {lenWidth > 0 && (
+              <div className="left-btn">
+                <button className="navigation-buttons " onClick={scrollLeft}>
+                  <i className="fa-solid fa-caret-left"></i>
+                  <span>Previus</span>
+                </button>
+              </div>
+            )}
+            {lenWidth <= WidthNow * 5 && (
+              <div className="right-btn">
+                <button className="navigation-buttons" onClick={scrollRight}>
+                  <span>Next</span>
+                  <i className="fa-solid fa-caret-right"></i>
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
